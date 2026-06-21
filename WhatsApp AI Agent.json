@@ -1,0 +1,162 @@
+{
+  "name": "WhatsApp AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "b3c3e0bc-4b9c-4096-aeaa-4ec9f8586dff",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        -64
+      ],
+      "id": "c6e8cacf-a3e4-4de0-9454-b6796fb046ab",
+      "name": "Webhook",
+      "webhookId": "b3c3e0bc-4b9c-4096-aeaa-4ec9f8586dff"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        96,
+        -64
+      ],
+      "id": "5643b325-350c-4d8b-812b-2c726f3e7b80",
+      "name": "When chat message received",
+      "webhookId": "bd3ace18-4992-431f-9335-e0b10a193e4c"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-6",
+          "cachedResultName": "Claude Sonnet 4.6"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.5,
+      "position": [
+        624,
+        0
+      ],
+      "id": "933299e8-d922-4261-af31-81f34097a515",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "pyioWGXOtb0Ra461",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistantYou are a helpful WhatsApp customer service assistant for a small business.\n\nWhen a customer sends a message:\n1. Read their message carefully\n2. Respond in a friendly, helpful way\n3. Keep responses SHORT (2-3 sentences max - WhatsApp style!)\n4. Use simple language (not too formal)\n5. Add relevant emojis to make it friendly 😊\n6. If asking about prices, say \"Please contact us for pricing\"\n7. If asking about hours, say \"We are open 9am-9pm daily\"\n8. Sign off with business name\n\nAlways be warm, quick and helpful!"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        128,
+        128
+      ],
+      "id": "a2da170e-bfe7-4621-97f7-e9e1fd424ef0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        480,
+        128
+      ],
+      "id": "f375357e-7e5f-406d-bc34-fe6bce19db57",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        336
+      ],
+      "id": "31a16bee-2fb7-4544-8ac6-da15ec9e2a38",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "brTd4WruzFsl4iDR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1fdaa541-6750-46eb-a17b-d161ed17f5fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "76310f28f287f67827e96964e205f23daec680ba6cc949573ea2ee14a789e87a"
+  },
+  "id": "NoQMsLbDhI7zvDK9",
+  "tags": []
+}
